@@ -1,4 +1,6 @@
 import { teamMembers, type TeamMember, type InsertTeamMember } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getAllTeamMembers(): Promise<TeamMember[]>;
@@ -8,75 +10,44 @@ export interface IStorage {
   updateStressLevel(id: number, stressLevel: number): Promise<TeamMember | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private teamMembers: Map<number, TeamMember>;
-  private currentId: number;
-
-  constructor() {
-    this.teamMembers = new Map();
-    this.currentId = 1;
-    
-    // Initialize with default team members
-    this.initializeDefaultMembers();
-  }
-
-  private async initializeDefaultMembers() {
-    const defaultMembers = [
-      { name: 'Sarah Chen', role: 'Product Manager', stressLevel: 5 },
-      { name: 'Mike Johnson', role: 'Frontend Developer', stressLevel: 3 },
-      { name: 'Emma Smith', role: 'UX Designer', stressLevel: 5 },
-      { name: 'David Lee', role: 'Backend Developer', stressLevel: 2 },
-      { name: 'Anna Rodriguez', role: 'QA Engineer', stressLevel: 4 },
-      { name: 'James Brown', role: 'DevOps Engineer', stressLevel: 6 }
-    ];
-
-    for (const member of defaultMembers) {
-      await this.createTeamMember(member);
-    }
-  }
-
+export class DatabaseStorage implements IStorage {
   async getAllTeamMembers(): Promise<TeamMember[]> {
-    return Array.from(this.teamMembers.values());
+    return await db.select().from(teamMembers);
   }
 
   async getTeamMember(id: number): Promise<TeamMember | undefined> {
-    return this.teamMembers.get(id);
+    const [member] = await db.select().from(teamMembers).where(eq(teamMembers.id, id));
+    return member || undefined;
   }
 
   async getTeamMemberByName(name: string): Promise<TeamMember | undefined> {
-    return Array.from(this.teamMembers.values()).find(
-      (member) => member.name === name,
-    );
+    const [member] = await db.select().from(teamMembers).where(eq(teamMembers.name, name));
+    return member || undefined;
   }
 
   async createTeamMember(insertMember: InsertTeamMember): Promise<TeamMember> {
-    const id = this.currentId++;
-    const member: TeamMember = { 
-      id,
-      name: insertMember.name,
-      role: insertMember.role,
-      stressLevel: insertMember.stressLevel || 5,
-      lastUpdate: new Date()
-    };
-    this.teamMembers.set(id, member);
+    const [member] = await db
+      .insert(teamMembers)
+      .values({
+        name: insertMember.name,
+        role: insertMember.role,
+        stressLevel: insertMember.stressLevel || 5
+      })
+      .returning();
     return member;
   }
 
   async updateStressLevel(id: number, stressLevel: number): Promise<TeamMember | undefined> {
-    const member = this.teamMembers.get(id);
-    if (!member) {
-      return undefined;
-    }
-
-    const updatedMember: TeamMember = {
-      ...member,
-      stressLevel,
-      lastUpdate: new Date()
-    };
-
-    this.teamMembers.set(id, updatedMember);
-    return updatedMember;
+    const [updatedMember] = await db
+      .update(teamMembers)
+      .set({ 
+        stressLevel,
+        lastUpdate: new Date()
+      })
+      .where(eq(teamMembers.id, id))
+      .returning();
+    return updatedMember || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

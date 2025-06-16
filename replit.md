@@ -50,15 +50,15 @@ This is a full-stack web application built to monitor and track team stress leve
 
 ### Storage Abstraction
 - **Interface-based Design**: `IStorage` interface allows for multiple storage implementations
-- **Current Implementation**: In-memory storage with default team members
-- **Future-ready**: Designed to easily swap to database storage
+- **Current Implementation**: PostgreSQL database with Drizzle ORM
+- **Database Features**: Persistent storage with automatic timestamps and data integrity
 
 ## Data Flow
 
-1. **Application Bootstrap**: Default team members are initialized in memory storage
+1. **Application Bootstrap**: Default team members are initialized in PostgreSQL database
 2. **Data Fetching**: React Query manages server state with automatic caching and background updates
-3. **User Interactions**: Form submissions trigger API calls with optimistic updates
-4. **Real-time Updates**: Query invalidation ensures UI stays synchronized with server state
+3. **User Interactions**: Form submissions trigger API calls with database persistence
+4. **Real-time Updates**: Query invalidation ensures UI stays synchronized with database state
 5. **Error Handling**: Comprehensive error boundaries and user feedback via toast notifications
 
 ## External Dependencies
@@ -100,5 +100,7 @@ Preferred communication style: Simple, everyday language.
 
 ## Changelog
 
-Changelog:
-- June 16, 2025. Initial setup
+- June 16, 2025: Initial setup with in-memory storage
+- June 16, 2025: Transformed UI to car-meter style with gauge components and emoji-rich interface
+- June 16, 2025: Added user selection without login requirement
+- June 16, 2025: Integrated PostgreSQL database with Drizzle ORM for persistent storage
