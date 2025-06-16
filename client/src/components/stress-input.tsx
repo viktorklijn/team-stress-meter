@@ -57,6 +57,12 @@ export function StressInput({ currentUser }: StressInputProps) {
     return `${Math.floor(diff / 1440)}d ago`;
   };
 
+  const getStressBackground = (level: number) => {
+    if (level <= 3) return 'from-green-50 to-green-100 border-green-300';
+    if (level <= 6) return 'from-yellow-50 to-yellow-100 border-yellow-300';
+    return 'from-red-50 to-red-100 border-red-300';
+  };
+
   if (!currentUser) {
     return (
       <Card className="bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300">
@@ -74,11 +80,16 @@ export function StressInput({ currentUser }: StressInputProps) {
   }
 
   return (
-    <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200 shadow-lg">
+    <Card className={`bg-gradient-to-br ${getStressBackground(stressLevel)} border-2 shadow-lg transition-all duration-500`}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+            <div 
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500"
+              style={{
+                backgroundColor: stressLevel <= 3 ? '#10b981' : stressLevel <= 6 ? '#f59e0b' : '#ef4444'
+              }}
+            >
               <Gauge className="w-5 h-5 text-white" />
             </div>
             <div>
