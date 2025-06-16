@@ -52,12 +52,22 @@ export function TeamMemberCard({ member, isCurrentUser }: TeamMemberCardProps) {
     return `${Math.floor(diff / 1440)}d ago`;
   };
 
+  const getStressBackground = (level: number, isCurrentUser: boolean) => {
+    if (isCurrentUser) {
+      if (level <= 3) return 'from-green-100 to-green-200 border-green-400';
+      if (level <= 6) return 'from-yellow-100 to-yellow-200 border-yellow-400';
+      return 'from-red-100 to-red-200 border-red-400';
+    } else {
+      if (level <= 3) return 'from-green-50 to-green-100 border-green-300';
+      if (level <= 6) return 'from-yellow-50 to-yellow-100 border-yellow-300';
+      return 'from-red-50 to-red-100 border-red-300';
+    }
+  };
+
   return (
-    <Card className={`bg-gradient-to-br ${
-      isCurrentUser 
-        ? 'from-blue-50 to-indigo-50 border-2 border-blue-300 shadow-lg' 
-        : 'from-white to-slate-50 border border-slate-200'
-    } hover:shadow-lg transition-all duration-300`}>
+    <Card className={`bg-gradient-to-br ${getStressBackground(member.stressLevel, isCurrentUser)} border-2 hover:shadow-lg transition-all duration-300 ${
+      isCurrentUser ? 'shadow-lg' : 'shadow-sm'
+    }`}>
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
