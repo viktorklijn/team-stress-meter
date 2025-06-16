@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Heart } from "lucide-react";
+import { Gauge } from "lucide-react";
 import { StressInput } from "@/components/stress-input";
 import { TeamMemberCard } from "@/components/team-member-card";
 import { TeamSummary } from "@/components/team-summary";
+import { UserSelector } from "@/components/user-selector";
 import type { TeamMember } from "@shared/schema";
 
 export default function Dashboard() {
+  const [currentUser, setCurrentUser] = useState<TeamMember | undefined>();
+  
   const {
     data: teamMembers = [],
     isLoading,
@@ -13,9 +17,6 @@ export default function Dashboard() {
   } = useQuery<TeamMember[]>({
     queryKey: ["/api/team-members"],
   });
-
-  // For demo purposes, assume the first member is the current user
-  const currentUser = teamMembers[0];
 
   if (isLoading) {
     return (

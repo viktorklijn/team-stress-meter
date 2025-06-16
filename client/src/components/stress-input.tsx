@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Save, Smile, Meh, Frown } from "lucide-react";
+import { Save, Gauge } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { GaugeMeter } from "@/components/gauge-meter";
 import type { TeamMember } from "@shared/schema";
 
 interface StressInputProps {
@@ -29,13 +30,13 @@ export function StressInput({ currentUser }: StressInputProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/team-members"] });
       toast({
-        title: "Stress level updated",
+        title: "Updated! 🎯",
         description: "Your stress level has been updated successfully.",
       });
     },
     onError: () => {
       toast({
-        title: "Error",
+        title: "Oops! 😅",
         description: "Failed to update stress level. Please try again.",
         variant: "destructive",
       });
@@ -44,12 +45,6 @@ export function StressInput({ currentUser }: StressInputProps) {
 
   const handleUpdateStress = () => {
     updateStressMutation.mutate(stressLevel);
-  };
-
-  const getStressColor = (level: number) => {
-    if (level <= 3) return "text-green-600";
-    if (level <= 6) return "text-amber-600";
-    return "text-red-600";
   };
 
   const formatLastUpdate = (date?: Date) => {
@@ -62,70 +57,100 @@ export function StressInput({ currentUser }: StressInputProps) {
     return `${Math.floor(diff / 1440)}d ago`;
   };
 
+  if (!currentUser) {
+    return (
+      <Card className="bg-gradient-to-br from-slate-100 to-slate-200 border border-slate-300">
+        <CardContent className="p-6 text-center">
+          <div className="text-4xl mb-3">🤔</div>
+          <h2 className="text-lg font-semibold text-slate-700">
+            Select yourself first!
+          </h2>
+          <p className="text-sm text-slate-500 mt-1">
+            Choose your name below to update your stress level
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
-    <Card className="bg-white shadow-sm border border-slate-200">
+    <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-2 border-blue-200 shadow-lg">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-lg font-semibold text-slate-900">
-              How are you feeling today?
-            </h2>
-            <p className="text-sm text-slate-600 mt-1">
-              Update your current stress level
-            </p>
-          </div>
-          <div className="text-right">
-            <div className={`text-2xl font-bold ${getStressColor(stressLevel)}`}>
-              {stressLevel}
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
+              <Gauge className="w-5 h-5 text-white" />
             </div>
-            <div className="text-xs text-slate-500">Current Level</div>
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">
+                How are you feeling today? 🌟
+              </h2>
+              <p className="text-sm text-slate-600 mt-1">
+                Update your stress meter, {currentUser.name}!
+              </p>
+            </div>
           </div>
         </div>
 
-        <div className="space-y-4">
-          <div className="flex items-center justify-between text-sm text-slate-600">
-            <span className="flex items-center space-x-1">
-              <Smile className="w-4 h-4 text-green-600" />
-              <span>Low Stress</span>
-            </span>
-            <span className="flex items-center space-x-1">
-              <Meh className="w-4 h-4 text-amber-600" />
-              <span>Moderate</span>
-            </span>
-            <span className="flex items-center space-x-1">
-              <Frown className="w-4 h-4 text-red-600" />
-              <span>High Stress</span>
-            </span>
+        <div className="flex flex-col lg:flex-row items-center space-y-6 lg:space-y-0 lg:space-x-8">
+          {/* Gauge Display */}
+          <div className="flex-shrink-0">
+            <GaugeMeter value={stressLevel} size="large" />
           </div>
 
-          <div className="relative">
-            <input
-              type="range"
-              min="1"
-              max="10"
-              value={stressLevel}
-              onChange={(e) => setStressLevel(parseInt(e.target.value))}
-              className="stress-slider"
-            />
-            <div className="flex justify-between text-xs text-slate-400 mt-2">
-              {Array.from({ length: 10 }, (_, i) => (
-                <span key={i + 1}>{i + 1}</span>
-              ))}
+          {/* Controls */}
+          <div className="flex-1 space-y-6 w-full">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-sm text-slate-700">
+                <span className="flex items-center space-x-1">
+                  <span>😌</span>
+                  <span>Chill</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <span>😐</span>
+                  <span>Busy</span>
+                </span>
+                <span className="flex items-center space-x-1">
+                  <span>😰</span>
+                  <span>Overwhelmed</span>
+                </span>
+              </div>
+
+              <div className="relative">
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={stressLevel}
+                  onChange={(e) => setStressLevel(parseInt(e.target.value))}
+                  className="stress-slider"
+                  style={{
+                    background: 'linear-gradient(to right, #86efac 0%, #fde047 50%, #f87171 100%)'
+                  }}
+                />
+
+                <div className="flex justify-between text-xs text-slate-500 mt-2">
+                  {Array.from({ length: 10 }, (_, i) => (
+                    <span key={i + 1} className="w-4 text-center">{i + 1}</span>
+                  ))}
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="flex justify-between items-center">
-            <Button
-              onClick={handleUpdateStress}
-              disabled={updateStressMutation.isPending || !currentUser}
-              className="px-4 py-2 bg-indigo-500 text-white hover:bg-indigo-600 transition-colors font-medium text-sm"
-            >
-              <Save className="w-4 h-4 mr-2" />
-              {updateStressMutation.isPending ? "Updating..." : "Update Status"}
-            </Button>
-            <span className="text-xs text-slate-500">
-              Last updated: {formatLastUpdate(currentUser?.lastUpdate)}
-            </span>
+            <div className="flex flex-col sm:flex-row justify-between items-center space-y-3 sm:space-y-0">
+              <Button
+                onClick={handleUpdateStress}
+                disabled={updateStressMutation.isPending || stressLevel === currentUser.stressLevel}
+                className="px-6 py-3 bg-blue-500 text-white hover:bg-blue-600 transition-colors font-medium"
+                size="lg"
+              >
+                <Save className="w-5 h-5 mr-2" />
+                {updateStressMutation.isPending ? "Updating... ⏳" : "Update My Status! 🚀"}
+              </Button>
+              <span className="text-xs text-slate-600 text-center">
+                Last updated: {formatLastUpdate(currentUser.lastUpdate)} ⏰
+              </span>
+            </div>
           </div>
         </div>
       </CardContent>
