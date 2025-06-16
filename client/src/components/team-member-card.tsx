@@ -65,7 +65,7 @@ export function TeamMemberCard({ member, isCurrentUser }: TeamMemberCardProps) {
   };
 
   return (
-    <Card className={`bg-gradient-to-br ${getStressBackground(member.stressLevel, isCurrentUser)} border-2 hover:shadow-lg transition-all duration-300 ${
+    <Card className={`bg-gradient-to-br ${getStressBackground(member.stressLevel, isCurrentUser || false)} border-2 hover:shadow-lg transition-all duration-300 ${
       isCurrentUser ? 'shadow-lg' : 'shadow-sm'
     }`}>
       <CardContent className="p-6">
