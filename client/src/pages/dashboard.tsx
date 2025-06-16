@@ -112,33 +112,15 @@ export default function Dashboard() {
         {/* Team Summary */}
         <TeamSummary members={teamMembers} />
 
-        {/* Team Dashboard */}
-        <div>
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-xl font-semibold text-slate-900">
-                Team Stress Meters 🎛️
-              </h2>
-              <p className="text-sm text-slate-600 mt-1">
-                Real-time stress levels for all team members
-              </p>
-            </div>
-            <div className="flex items-center space-x-2 text-sm text-slate-600">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>Live updates</span>
-            </div>
-          </div>
-
-          {/* Team Member Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {teamMembers.map((member) => (
-              <TeamMemberCard
-                key={member.id}
-                member={member}
-                isCurrentUser={member.id === currentUser?.id}
-              />
-            ))}
-          </div>
+        {/* Team Member Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {teamMembers.map((member) => (
+            <TeamMemberCard
+              key={member.id}
+              member={member}
+              isCurrentUser={member.id === currentUser?.id}
+            />
+          ))}
         </div>
       </main>
     </div>

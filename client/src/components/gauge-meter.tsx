@@ -32,16 +32,19 @@ export function GaugeMeter({ value, maxValue = 10, size = 'medium', showValue = 
   return (
     <div className="flex flex-col items-center">
       <div 
-        className="gauge-meter relative"
+        className="relative"
         style={{ 
           width: currentSize.width, 
           height: currentSize.height,
           background: `conic-gradient(
             from 180deg at 50% 100%, 
-            var(--stress-low) 0deg 60deg,
-            var(--stress-medium) 60deg 120deg, 
-            var(--stress-high) 120deg 180deg
-          )`
+            #10b981 0deg 60deg,
+            #f59e0b 60deg 120deg, 
+            #ef4444 120deg 180deg
+          )`,
+          borderRadius: `${currentSize.width / 2}px ${currentSize.width / 2}px 0 0`,
+          border: '4px solid #cbd5e1',
+          overflow: 'hidden'
         }}
       >
         {/* Inner white circle */}
