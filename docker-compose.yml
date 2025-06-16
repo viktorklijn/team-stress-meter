@@ -6,7 +6,7 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - DATABASE_URL=postgresql://postgres:password@localhost:5432/team_stress_monitor
+      - DATABASE_URL=postgresql://postgres:password@localhost:5433/team_stress_monitor
     depends_on:
       - db
     restart: unless-stopped
@@ -21,7 +21,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
-      - "5432:5432"
+      - "5433:5433"
     restart: unless-stopped
 
 volumes:
