@@ -18,25 +18,32 @@ export default function Dashboard() {
     queryKey: ["/api/team-members"],
   });
 
+  const handleUserSelect = (user: TeamMember) => {
+    setCurrentUser(user);
+  };
+
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <header className="bg-white shadow-sm border-b border-slate-200">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        <header className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-                  <Heart className="text-white w-4 h-4" />
+                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Gauge className="text-white w-4 h-4" />
                 </div>
-                <h1 className="text-xl font-semibold text-slate-900">
-                  Team Stress Monitor
+                <h1 className="text-xl font-semibold text-white">
+                  Team Stress Meters 🚗💨
                 </h1>
               </div>
             </div>
           </div>
         </header>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">Loading...</div>
+          <div className="text-center text-slate-600">
+            <div className="text-4xl mb-4">⏳</div>
+            <div>Loading your team dashboard...</div>
+          </div>
         </main>
       </div>
     );
@@ -44,78 +51,76 @@ export default function Dashboard() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-slate-50">
-        <header className="bg-white shadow-sm border-b border-slate-200">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        <header className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-                  <Heart className="text-white w-4 h-4" />
+                <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                  <Gauge className="text-white w-4 h-4" />
                 </div>
-                <h1 className="text-xl font-semibold text-slate-900">
-                  Team Stress Monitor
+                <h1 className="text-xl font-semibold text-white">
+                  Team Stress Meters 🚗💨
                 </h1>
               </div>
             </div>
           </div>
         </header>
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center text-red-600">
-            Error loading team data. Please refresh the page.
+          <div className="text-center">
+            <div className="text-4xl mb-4">😞</div>
+            <div className="text-red-600">
+              Error loading team data. Please refresh the page.
+            </div>
           </div>
         </main>
       </div>
     );
   }
 
-  const getInitials = (name: string) => {
-    return name
-      .split(" ")
-      .map((n) => n[0])
-      .join("")
-      .toUpperCase();
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50">
-      <header className="bg-white shadow-sm border-b border-slate-200">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
-                <Heart className="text-white w-4 h-4" />
+              <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                <Gauge className="text-white w-4 h-4" />
               </div>
-              <h1 className="text-xl font-semibold text-slate-900">
-                Team Stress Monitor
+              <h1 className="text-xl font-semibold text-white">
+                Team Stress Meters 🚗💨
               </h1>
             </div>
-            {currentUser && (
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-slate-600">{currentUser.name}</span>
-                <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-medium text-indigo-600">
-                    {getInitials(currentUser.name)}
-                  </span>
-                </div>
-              </div>
-            )}
+            <div className="text-white text-sm">
+              {teamMembers.length} team members 👥
+            </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        {/* User Selection */}
+        <UserSelector 
+          teamMembers={teamMembers} 
+          currentUser={currentUser}
+          onUserSelect={handleUserSelect}
+        />
+
         {/* Personal Stress Input */}
-        <div className="mb-8">
-          <StressInput currentUser={currentUser} />
-        </div>
+        <StressInput currentUser={currentUser} />
+
+        {/* Team Summary */}
+        <TeamSummary members={teamMembers} />
 
         {/* Team Dashboard */}
         <div>
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-slate-900">Team Overview</h2>
+              <h2 className="text-xl font-semibold text-slate-900">
+                Team Stress Meters 🎛️
+              </h2>
               <p className="text-sm text-slate-600 mt-1">
-                Current stress levels across the team
+                Real-time stress levels for all team members
               </p>
             </div>
             <div className="flex items-center space-x-2 text-sm text-slate-600">
@@ -125,7 +130,7 @@ export default function Dashboard() {
           </div>
 
           {/* Team Member Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {teamMembers.map((member) => (
               <TeamMemberCard
                 key={member.id}
@@ -134,9 +139,6 @@ export default function Dashboard() {
               />
             ))}
           </div>
-
-          {/* Team Summary */}
-          <TeamSummary members={teamMembers} />
         </div>
       </main>
     </div>
